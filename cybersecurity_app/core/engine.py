@@ -1,9 +1,22 @@
+import sqlite3
 import json
 
 class CoreEngine:
-    def __init__(self, knowledge_base_path="knowledge_base.json"):
-        self.knowledge_base_path = knowledge_base_path
-        self.load_knowledge_base()
+    def __init__(self, db_path="knowledge_base.db"):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(self.db_path)
+        self.create_tables()
+
+    def create_tables(self):
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_type TEXT NOT NULL,
+                event_data TEXT NOT NULL
+            )
+        """)
+        self.conn.commit()
 
     def process_event(self, event):
         # Placeholder for event processing logic
@@ -15,19 +28,15 @@ class CoreEngine:
         print(f"Learning from event: {event}")
         event_type = event.get("type")
         if event_type:
-            if event_type not in self.knowledge_base:
-                self.knowledge_base[event_type] = {"count": 0, "events": []}
-            self.knowledge_base[event_type]["count"] += 1
-            self.knowledge_base[event_type]["events"].append(event)
-        self.save_knowledge_base()
+            cursor = self.conn.cursor()
+            cursor.execute("INSERT INTO events (event_type, event_data) VALUES (?, ?)",
+                           (event_type, json.dumps(event)))
+            self.conn.commit()
 
-    def load_knowledge_base(self):
-        try:
-            with open(self.knowledge_base_path, "r") as f:
-                self.knowledge_base = json.load(f)
-        except FileNotFoundError:
-            self.knowledge_base = {}
+    def get_events_by_type(self, event_type):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT event_data FROM events WHERE event_type = ?", (event_type,))
+        return [json.loads(row[0]) for row in cursor.fetchall()]
 
-    def save_knowledge_base(self):
-        with open(self.knowledge_base_path, "w") as f:
-            json.dump(self.knowledge_base, f, indent=4)
+    def __del__(self):
+        self.conn.close()

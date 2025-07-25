@@ -7,18 +7,20 @@ from core.engine import CoreEngine
 class TestEngine(unittest.TestCase):
 
     def setUp(self):
-        self.engine = CoreEngine(knowledge_base_path="test_knowledge_base.json")
+        self.db_path = "test_knowledge_base.db"
+        self.engine = CoreEngine(db_path=self.db_path)
 
     def tearDown(self):
-        if os.path.exists("test_knowledge_base.json"):
-            os.remove("test_knowledge_base.json")
+        self.engine.conn.close()
+        if os.path.exists(self.db_path):
+            os.remove(self.db_path)
 
     def test_learn_from_event(self):
         event = {"type": "test_event", "data": "some_data"}
         self.engine.process_event(event)
-        self.assertIn("test_event", self.engine.knowledge_base)
-        self.assertEqual(self.engine.knowledge_base["test_event"]["count"], 1)
-        self.assertEqual(len(self.engine.knowledge_base["test_event"]["events"]), 1)
+        events = self.engine.get_events_by_type("test_event")
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["data"], "some_data")
 
 if __name__ == '__main__':
     unittest.main()

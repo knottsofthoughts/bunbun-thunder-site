@@ -9,8 +9,9 @@ def main():
     parser = argparse.ArgumentParser(description="Cybersecurity App Admin CLI")
     subparsers = parser.add_subparsers(dest="command")
 
-    # View knowledge base
-    view_parser = subparsers.add_parser("view", help="View the knowledge base")
+    # View events
+    view_parser = subparsers.add_parser("view", help="View events by type")
+    view_parser.add_argument("--type", required=True, help="Type of the event to view")
 
     # Add event
     add_parser = subparsers.add_parser("add", help="Add a new event")
@@ -22,7 +23,8 @@ def main():
     engine = CoreEngine()
 
     if args.command == "view":
-        print(json.dumps(engine.knowledge_base, indent=4))
+        events = engine.get_events_by_type(args.type)
+        print(json.dumps(events, indent=4))
     elif args.command == "add":
         event = {"type": args.type}
         if args.user:
