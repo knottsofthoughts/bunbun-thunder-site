@@ -1,0 +1,57 @@
+{
+    "login_attempt": {
+        "count": 1,
+        "events": [
+            {
+                "type": "login_attempt",
+                "user": "admin",
+                "success": false
+            }
+        ]
+    },
+    "file_access": {
+        "count": 1,
+        "events": [
+            {
+                "type": "file_access",
+                "user": "test_user",
+                "success": true
+            }
+        ]
+    },
+    "file_integrity_check": {
+        "count": 2,
+        "events": [
+            {
+                "type": "file_integrity_check",
+                "filepath": "knowledge_base.json",
+                "hash": "9d15d004d37525ed7962e93c95fda94390b83a3c3a2f1ec74b5bd7ab6cc901a2"
+            },
+            {
+                "type": "file_integrity_check",
+                "filepath": "knowledge_base.json",
+                "hash": "31c5cafc9bc15f943a9fb18dbdbe65651d8c749baf640dd1379281625d262051"
+            }
+        ]
+    },
+    "tampering": {
+        "count": 1,
+        "events": [
+            {
+                "type": "tampering",
+                "user": "attacker"
+            }
+        ]
+    },
+    "file_modified": {
+        "count": 1,
+        "events": [
+            {
+                "type": "file_modified",
+                "filepath": "knowledge_base.json",
+                "previous_hash": "9d15d004d37525ed7962e93c95fda94390b83a3c3a2f1ec74b5bd7ab6cc901a2",
+                "current_hash": "31c5cafc9bc15f943a9fb18dbdbe65651d8c749baf640dd1379281625d262051"
+            }
+        ]
+    }
+}
