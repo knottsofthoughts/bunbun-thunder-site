@@ -1,5 +1,6 @@
 import os
 import shutil
+import os
 
 class ThreatResponder:
     def __init__(self, engine):
