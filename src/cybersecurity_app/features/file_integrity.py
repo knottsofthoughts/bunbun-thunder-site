@@ -1,6 +1,6 @@
 import hashlib
 import os
-from .threat_response import ThreatResponder
+from cybersecurity_app.features.threat_response import ThreatResponder
 
 def get_file_hash(filepath):
     """Calculates the SHA256 hash of a file."""

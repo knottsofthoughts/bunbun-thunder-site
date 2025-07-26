@@ -1,7 +1,7 @@
 import os
 import bpy
 from bpy.props import StringProperty
-from .audio_utils import convert_wma_to_wav
+from blender_social_uploader.lib.audio_utils import convert_wma_to_wav
 class SOCIAL_OT_upload(bpy.types.Operator):
     """Upload selected asset to a social media platform"""
     bl_idname = "social.upload_asset"

@@ -21,16 +21,15 @@ class CoreEngine:
     def process_event(self, event):
         # Placeholder for event processing logic
         print(f"Processing event: {event}")
+        self.learn_from_event(event)
 
     def is_suspicious(self, filepath, previous_hash, current_hash):
         # Placeholder for suspicion logic
         return "malicious" in open(filepath).read()
-        self.learn_from_event(event)
 
     def learn_from_event(self, event):
         # More sophisticated learning logic will be added here
         print(f"Learning from event: {event}")
-        self.db.insert(event)
         event_type = event.get("type")
         if event_type:
             cursor = self.conn.cursor()

@@ -1,5 +1,5 @@
-from core.engine import CoreEngine
-from features.file_integrity import FileIntegrityMonitor
+from cybersecurity_app.core.engine import CoreEngine
+from cybersecurity_app.features.file_integrity import FileIntegrityMonitor
 
 if __name__ == "__main__":
     engine = CoreEngine()

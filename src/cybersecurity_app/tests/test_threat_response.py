@@ -3,8 +3,8 @@ import os
 import shutil
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from core.engine import CoreEngine
-from features.threat_response import ThreatResponder
+from cybersecurity_app.core.engine import CoreEngine
+from cybersecurity_app.features.threat_response import ThreatResponder
 
 class TestThreatResponse(unittest.TestCase):
 

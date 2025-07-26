@@ -3,7 +3,7 @@ import json
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from core.engine import CoreEngine
+from cybersecurity_app.core.engine import CoreEngine
 
 def main():
     parser = argparse.ArgumentParser(description="Cybersecurity App Admin CLI")
