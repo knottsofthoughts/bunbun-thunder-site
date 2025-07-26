@@ -17,6 +17,8 @@ class SOCIAL_PT_video_processing(bpy.types.Panel):
         layout.label(text="Output Format:")
         layout.prop(scene, "social_uploader_output_format")
 
+        layout.operator("video.process", text="Process Video")
+
 def register():
     bpy.utils.register_class(SOCIAL_PT_video_processing)
     bpy.types.Scene.social_uploader_video_path = bpy.props.StringProperty(

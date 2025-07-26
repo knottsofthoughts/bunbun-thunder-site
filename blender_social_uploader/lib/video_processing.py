@@ -160,10 +160,20 @@ class AdvancedVideoReformatter:
                 bitrate=6000000,
                 audio_bitrate=128000,
                 quality_preset="fast"
+            ),
+            "webm": VideoFormat(
+                container="webm",
+                video_codec=VideoCodec.VP9,
+                audio_codec=AudioCodec.OPUS,
+                resolution=(1920, 1080),
+                framerate=30.0,
+                bitrate=5000000,
+                audio_bitrate=128000,
+                quality_preset="fast"
             )
         }
 
-    async def reformat_video(self, input_path: str, config: ReformatConfig) -> List[str]:
+    def reformat_video(self, input_path: str, config: ReformatConfig) -> List[str]:
         output_paths = []
         for output_format in config.output_formats:
             output_path = self.temp_dir / f"{Path(input_path).stem}_{output_format.resolution[1]}p.{output_format.container}"
@@ -179,19 +189,12 @@ class AdvancedVideoReformatter:
                                    preset=output_format.quality_preset)
 
             try:
-                await self._run_ffmpeg(stream)
+                self._run_ffmpeg(stream)
                 output_paths.append(str(output_path))
             except Exception as e:
                 print(f"Error reformatting to {output_format.resolution[1]}p: {e}")
 
         return output_paths
 
-    async def _run_ffmpeg(self, stream):
-        process = await asyncio.create_subprocess_exec(
-            *ffmpeg.get_args(stream),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        stdout, stderr = await process.communicate()
-        if process.returncode != 0:
-            raise Exception(stderr.decode())
+    def _run_ffmpeg(self, stream):
+        ffmpeg.run(stream, overwrite_output=True)

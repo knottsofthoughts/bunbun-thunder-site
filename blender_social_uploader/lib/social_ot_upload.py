@@ -1,7 +1,11 @@
 import os
 import bpy
+import asyncio
 from bpy.props import StringProperty
 from .audio_utils import convert_wma_to_wav
+from .http_utils import upload_file
+from .video_processing import AdvancedVideoReformatter, ReformatConfig
+
 class SOCIAL_OT_upload(bpy.types.Operator):
     """Upload selected asset to a social media platform"""
     bl_idname = "social.upload_asset"
@@ -14,23 +18,48 @@ class SOCIAL_OT_upload(bpy.types.Operator):
         description="Choose an asset or sound file to upload"
     )
     filepath: StringProperty(subtype="FILE_PATH")
+    title: StringProperty(name="Title", description="Title for the upload")
+    description: StringProperty(name="Description", description="Description for the upload")
 
     def execute(self, context):
-        filepath = self.filepath
-        ext = os.path.splitext(filepath)[1].lower().lstrip(".")
+        try:
+            filepath = self.filepath
+            ext = os.path.splitext(filepath)[1].lower().lstrip(".")
 
-        if ext == "wma":
-            self.report({'INFO'}, "🛠️ Converting WMA to WAV…")
-            try:
+            video_extensions = ["mp4", "mov", "avi", "mkv", "webm"]
+
+            if ext in video_extensions:
+                self.report({'INFO'}, "Processing video...")
+                reformatter = AdvancedVideoReformatter()
+                preset = reformatter.presets['web_optimized']
+                config = ReformatConfig(input_format=None, output_formats=[preset])
+                processed_files = reformatter.reformat_video(filepath, config)
+                if not processed_files:
+                    raise Exception("Video processing failed to produce any files.")
+                filepath = processed_files[0]
+                self.report({'INFO'}, "Video processing complete.")
+
+            elif ext == "wma":
+                self.report({'INFO'}, "🛠️ Converting WMA to WAV…")
                 filepath = convert_wma_to_wav(filepath)
-            except Exception as e:
-                self.report({'ERROR'}, f"Audio conversion failed: {e}")
-                return {'CANCELLED'}
+                self.report({'INFO'}, "Audio conversion complete.")
 
-        # TODO: Add platform selection logic here
-        self.report({'INFO'}, f"File selected: {os.path.basename(filepath)}")
+            self.report({'INFO'}, "Uploading file...")
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(upload_file(filepath, self.title, self.description))
+            self.report({'INFO'}, "Upload complete.")
+
+        except Exception as e:
+            self.report({'ERROR'}, f"An error occurred: {e}")
+            return {'CANCELLED'}
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "title")
+        layout.prop(self, "description")

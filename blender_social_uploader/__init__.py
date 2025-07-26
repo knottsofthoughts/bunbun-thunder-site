@@ -14,16 +14,12 @@ for sub in ("dependencies_private", "dependencies_public"):
         sys.path.append(str(dep))
 
 MODULES_TO_RELOAD = (
-    "event_loop",
-    "status_indicators",
-    "roblox_properties",
-    "oauth2_login_operators",
-    "RBX_OT_upload",
-    "RbxOAuth2Client",
-    "get_selected_objects",
-    "constants",
-    "creator_details",
-    "RBX_OT_install_dependencies",
+    "audio_utils",
+    "http_utils",
+    "social_ot_upload",
+    "ui",
+    "video_ot_process",
+    "video_processing",
 )
 
 def reload_modules(module_names):
@@ -58,7 +54,7 @@ except ImportError as e:
 
 bl_info = {
     "name": "Blender Social Uploader",
-    "author": "You",
+    "author": "Jules",
     "description": "Upload assets from Blender to various social media platforms.",
     "blender": (3, 2, 0),
     "version": (0, 1, 0),
@@ -68,11 +64,13 @@ bl_info = {
 }
 
 from .lib.social_ot_upload import SOCIAL_OT_upload
+from .lib.video_ot_process import VIDEO_OT_process
 from .lib import ui
 
 classes = (
     SOCIAL_OT_upload,
     ui.SOCIAL_PT_video_processing,
+    VIDEO_OT_process,
 )
 
 def register():
