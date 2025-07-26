@@ -72,17 +72,15 @@ from .lib import ui
 
 classes = (
     SOCIAL_OT_upload,
-    ui.SOCIAL_PT_video_processing,
+    ui.SOCIAL_PT_upload_panel,
 )
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    ui.register()
     logger.info("blender-social-uploader registered")
 
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    ui.unregister()
     logger.info("blender-social-uploader unregistered")

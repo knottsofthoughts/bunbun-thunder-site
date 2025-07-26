@@ -21,6 +21,8 @@ class TestEngine(unittest.TestCase):
         events = self.engine.get_events_by_type("test_event")
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]["data"], "some_data")
+        # Cleanup
+        self.engine.db.remove(Query().type == "test_event")
 
 if __name__ == '__main__':
     unittest.main()

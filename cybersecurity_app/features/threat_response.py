@@ -1,5 +1,6 @@
 import os
 import shutil
+import os
 
 class ThreatResponder:
     def __init__(self, engine):
@@ -17,9 +18,13 @@ class ThreatResponder:
             quarantine_path = os.path.join(self.quarantine_dir, os.path.basename(filepath))
             print(f"Quarantining file: {filepath} -> {quarantine_path}")
             shutil.move(filepath, quarantine_path)
+            # Placeholder for notification
+            print(f"Notification: File {filepath} has been quarantined.")
             event = {
                 "type": "file_quarantined",
                 "filepath": filepath,
                 "quarantine_path": quarantine_path
             }
             self.engine.process_event(event)
+        else:
+            print(f"File not found for quarantine: {filepath}")

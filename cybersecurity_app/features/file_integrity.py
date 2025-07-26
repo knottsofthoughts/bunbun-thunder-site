@@ -46,14 +46,24 @@ class FileIntegrityMonitor:
                         "current_hash": current_hash
                     }
                     self.engine.process_event(modification_event)
-                    self.responder.respond_to_threat(modification_event)
-                else:
-                    print(f"File has been modified (known good): {filepath}")
-                    modification_event = {
-                        "type": "file_modified",
-                        "filepath": filepath,
-                        "previous_hash": event["hash"],
-                        "current_hash": current_hash
-                    }
-                    self.engine.process_event(modification_event)
-                break
+        # Update the known hash to the new hash
+        previous_hash = self.known_good_hashes.get(filepath)
+        self.known_good_hashes[filepath] = current_hash
+        if self.engine.is_suspicious(filepath, previous_hash, current_hash):
+            print(f"Suspicious modification detected: {filepath}")
+            modification_event = {
+                "type": "suspicious_file_modification",
+                "filepath": filepath,
+                "previous_hash": previous_hash,
+                "current_hash": current_hash,
+            }
+            self.responder.respond_to_threat(modification_event)
+        else:
+            print(f"File has been modified (known good): {filepath}")
+            modification_event = {
+                "type": "file_modified",
+                "filepath": filepath,
+                "previous_hash": previous_hash,
+                "current_hash": current_hash,
+            }
+        self.engine.process_event(modification_event)
